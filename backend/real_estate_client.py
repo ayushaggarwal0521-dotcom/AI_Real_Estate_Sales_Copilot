@@ -1,5 +1,8 @@
 import asyncio
 import json
+import os
+import sys
+from pathlib import Path
 
 from mcp import ClientSession, StdioServerParameters
 from mcp.client.stdio import stdio_client
@@ -8,8 +11,15 @@ from mcp.client.stdio import stdio_client
 # ---------------------------------------------------------
 # MCP SERVER LOCATION
 # ---------------------------------------------------------
+#
+# Defaults to "server.py" living next to this file, which is portable
+# across machines/OSes. Set REAL_ESTATE_MCP_SERVER_PATH in your .env
+# if you keep server.py somewhere else.
 
-SERVER_PATH = r"D:\AI Instagram content\MCP_TOOLBOX\real_estate_server\server.py"
+SERVER_PATH = os.getenv(
+    "REAL_ESTATE_MCP_SERVER_PATH",
+    str(Path(__file__).resolve().parent / "server.py"),
+)
 
 
 # ---------------------------------------------------------
@@ -19,7 +29,7 @@ SERVER_PATH = r"D:\AI Instagram content\MCP_TOOLBOX\real_estate_server\server.py
 async def call_mcp_tool(tool_name: str, arguments: dict = None):
 
     server_params = StdioServerParameters(
-        command="python",
+        command=sys.executable,
         args=[SERVER_PATH]
     )
 

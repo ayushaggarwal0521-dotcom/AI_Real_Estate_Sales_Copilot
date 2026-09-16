@@ -1,0 +1,909 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Ashray — describe the home you want</title>
+<link rel="icon" href="data:,">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,400;9..144,500;9..144,600&family=IBM+Plex+Sans:wght@400;500;600&family=IBM+Plex+Mono:wght@400;500&display=swap" rel="stylesheet">
+<style>
+
+  /* ---------------------------------------------------------
+     TOKENS
+  --------------------------------------------------------- */
+  :root{
+    --ink:        #1C2321;
+    --ink-soft:   #445048;
+    --muted:      #5B6660;
+    --stone:      #E9EAE4;
+    --stone-deep: #DEDFD6;
+    --surface:    #FBFAF7;
+    --pine:       #2B4339;
+    --pine-light: #3E5C4E;
+    --brass:      #A9822F;
+    --brass-soft: #E6D9B8;
+    --brick:      #A6432E;
+    --line:       rgba(28,35,33,0.14);
+    --line-soft:  rgba(28,35,33,0.08);
+
+    --serif: "Fraunces", Georgia, serif;
+    --sans:  "IBM Plex Sans", system-ui, sans-serif;
+    --mono:  "IBM Plex Mono", "SFMono-Regular", monospace;
+  }
+
+  *{ box-sizing: border-box; }
+  html{ scroll-behavior: smooth; }
+  body{
+    margin: 0;
+    background: var(--stone);
+    color: var(--ink);
+    font-family: var(--sans);
+    line-height: 1.5;
+    -webkit-font-smoothing: antialiased;
+  }
+  a{ color: inherit; }
+  button{ font-family: inherit; }
+  :focus-visible{ outline: 2px solid var(--pine); outline-offset: 2px; }
+
+  @media (prefers-reduced-motion: reduce){
+    *{ animation: none !important; transition: none !important; }
+  }
+
+  .wrap{
+    max-width: 1180px;
+    margin: 0 auto;
+    padding: 0 28px;
+  }
+
+  /* ---------------------------------------------------------
+     NAV
+  --------------------------------------------------------- */
+  header.nav{
+    padding: 22px 0 0;
+  }
+  .nav__row{
+    display: flex;
+    align-items: baseline;
+    justify-content: space-between;
+    padding-bottom: 18px;
+    border-bottom: 1px solid var(--line);
+  }
+  .nav__mark{
+    font-family: var(--serif);
+    font-size: 22px;
+    font-weight: 600;
+    letter-spacing: -0.01em;
+  }
+  .nav__mark span{ color: var(--brass); }
+  .nav__meta{
+    font-family: var(--mono);
+    font-size: 12.5px;
+    color: var(--muted);
+  }
+
+  /* ---------------------------------------------------------
+     HERO
+  --------------------------------------------------------- */
+  .hero{
+    padding: 56px 0 40px;
+  }
+  .hero h1{
+    font-family: var(--serif);
+    font-weight: 500;
+    font-size: clamp(34px, 5vw, 54px);
+    line-height: 1.08;
+    letter-spacing: -0.01em;
+    max-width: 15ch;
+    margin: 0 0 16px;
+  }
+  .hero p.lede{
+    max-width: 52ch;
+    color: var(--ink-soft);
+    font-size: 17px;
+    margin: 0 0 34px;
+  }
+
+  .ask{
+    background: var(--surface);
+    border: 1px solid var(--line);
+    border-radius: 16px;
+    padding: 10px;
+    display: flex;
+    gap: 8px;
+    max-width: 720px;
+    box-shadow: 0 1px 0 var(--line-soft);
+  }
+  .ask__input{
+    flex: 1;
+    border: none;
+    background: transparent;
+    font-family: var(--sans);
+    font-size: 15.5px;
+    padding: 12px 14px;
+    color: var(--ink);
+  }
+  .ask__input::placeholder{ color: #8b958f; }
+  .ask__input:focus{ outline: none; }
+  .ask__submit{
+    border: none;
+    background: var(--pine);
+    color: var(--surface);
+    font-size: 14.5px;
+    font-weight: 500;
+    padding: 12px 22px;
+    border-radius: 999px;
+    cursor: pointer;
+    transition: background 120ms ease;
+    white-space: nowrap;
+  }
+  .ask__submit:hover{ background: var(--pine-light); }
+  .ask__submit:disabled{ opacity: 0.55; cursor: default; }
+
+  .examples{
+    display: flex;
+    flex-wrap: wrap;
+    gap: 8px;
+    margin-top: 14px;
+  }
+  .example-chip{
+    border: 1px solid var(--line);
+    background: transparent;
+    color: var(--ink-soft);
+    font-size: 13px;
+    padding: 7px 13px;
+    border-radius: 999px;
+    cursor: pointer;
+  }
+  .example-chip:hover{ border-color: var(--pine); color: var(--pine); }
+
+  .hero__stat{
+    margin-top: 22px;
+    font-family: var(--mono);
+    font-size: 12.5px;
+    color: var(--muted);
+  }
+
+  /* ---------------------------------------------------------
+     CONVERSATION TRAIL
+  --------------------------------------------------------- */
+  .trail{
+    max-width: 720px;
+    margin: 18px 0 0;
+    padding: 0;
+    list-style: none;
+    display: flex;
+    flex-direction: column;
+    gap: 6px;
+  }
+  .trail li{
+    font-size: 13.5px;
+    color: var(--muted);
+    padding-left: 14px;
+    border-left: 2px solid var(--line);
+  }
+  .trail li.current{
+    color: var(--ink);
+    border-left-color: var(--brass);
+    font-weight: 500;
+  }
+
+  /* ---------------------------------------------------------
+     LAYOUT: RAIL + RESULTS
+  --------------------------------------------------------- */
+  .board{
+    display: grid;
+    grid-template-columns: 240px 1fr;
+    gap: 36px;
+    padding: 8px 0 80px;
+    align-items: start;
+  }
+  @media (max-width: 860px){
+    .board{ grid-template-columns: 1fr; }
+  }
+
+  .rail{
+    position: sticky;
+    top: 24px;
+    border: 1px solid var(--line);
+    background: var(--surface);
+    border-radius: 12px;
+    padding: 20px;
+  }
+  .rail h2{
+    font-size: 14px;
+    font-weight: 600;
+    margin: 0 0 16px;
+  }
+  .field{
+    margin-bottom: 14px;
+  }
+  .field label{
+    display: block;
+    font-size: 12.5px;
+    color: var(--muted);
+    margin-bottom: 5px;
+  }
+  .field select,
+  .field input[type="number"]{
+    width: 100%;
+    border: 1px solid var(--line);
+    background: var(--stone);
+    border-radius: 8px;
+    padding: 8px 10px;
+    font-family: var(--sans);
+    font-size: 13.5px;
+    color: var(--ink);
+  }
+  .field--check{
+    display: flex;
+    align-items: center;
+    gap: 8px;
+  }
+  .field--check label{ margin: 0; color: var(--ink); font-size: 13.5px; }
+  .field--check input{ width: 16px; height: 16px; }
+
+  .rail__apply{
+    width: 100%;
+    background: var(--pine);
+    color: var(--surface);
+    border: none;
+    padding: 10px;
+    border-radius: 8px;
+    font-size: 13.5px;
+    font-weight: 500;
+    cursor: pointer;
+    margin-top: 6px;
+  }
+  .rail__apply:hover{ background: var(--pine-light); }
+  .rail__clear{
+    display: block;
+    text-align: center;
+    margin-top: 10px;
+    font-size: 12.5px;
+    color: var(--muted);
+    background: none;
+    border: none;
+    cursor: pointer;
+    text-decoration: underline;
+    text-underline-offset: 2px;
+  }
+
+  /* ---------------------------------------------------------
+     RESULTS
+  --------------------------------------------------------- */
+  .results__head{
+    display: flex;
+    align-items: baseline;
+    justify-content: space-between;
+    margin-bottom: 16px;
+  }
+  .results__head h2{
+    font-family: var(--serif);
+    font-weight: 500;
+    font-size: 22px;
+    margin: 0;
+  }
+  .results__count{
+    font-family: var(--mono);
+    font-size: 12.5px;
+    color: var(--muted);
+  }
+
+  .grid{
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+    gap: 16px;
+  }
+
+  .card{
+    border: 1px solid var(--line);
+    background: var(--surface);
+    border-radius: 12px;
+    padding: 18px;
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+  }
+  .card__top{
+    display: flex;
+    justify-content: space-between;
+    align-items: flex-start;
+    gap: 10px;
+  }
+  .card__title{
+    font-family: var(--serif);
+    font-size: 17px;
+    font-weight: 500;
+    line-height: 1.25;
+    margin: 0;
+  }
+  .card__price{
+    font-family: var(--mono);
+    font-size: 14.5px;
+    font-weight: 500;
+    color: var(--pine);
+    white-space: nowrap;
+  }
+  .card__place{
+    font-size: 13.5px;
+    color: var(--ink-soft);
+    margin: 0;
+  }
+  .card__spec{
+    font-size: 13px;
+    color: var(--muted);
+    margin: 0;
+  }
+
+  .pill{
+    display: inline-block;
+    font-size: 11.5px;
+    font-weight: 500;
+    padding: 3px 9px;
+    border-radius: 999px;
+    width: fit-content;
+  }
+  .pill--exact{ background: #DEE8E2; color: var(--pine); }
+  .pill--close{ background: var(--brass-soft); color: var(--brass); }
+  .pill--alternative{ background: var(--stone-deep); color: var(--muted); }
+
+  .card__why{
+    font-family: var(--serif);
+    font-style: italic;
+    font-size: 13.5px;
+    color: var(--ink-soft);
+    margin: 0;
+  }
+
+  .card__toggle{
+    align-self: flex-start;
+    background: none;
+    border: none;
+    color: var(--pine);
+    font-size: 13px;
+    font-weight: 500;
+    cursor: pointer;
+    padding: 2px 0;
+    margin-top: 2px;
+    text-decoration: underline;
+    text-underline-offset: 2px;
+  }
+
+  .card__detail{
+    display: none;
+    border-top: 1px solid var(--line-soft);
+    padding-top: 10px;
+    font-size: 13px;
+    color: var(--ink-soft);
+  }
+  .card__detail.open{ display: block; }
+  .card__detail p{ margin: 0 0 8px; }
+  .card__amenities{
+    display: flex;
+    flex-wrap: wrap;
+    gap: 6px;
+    padding: 0;
+    margin: 0;
+    list-style: none;
+  }
+  .card__amenities li{
+    font-size: 11.5px;
+    background: var(--stone);
+    border-radius: 6px;
+    padding: 3px 8px;
+    color: var(--ink-soft);
+  }
+
+  /* ---------------------------------------------------------
+     STATE MESSAGES
+  --------------------------------------------------------- */
+  .state-msg{
+    border: 1px dashed var(--line);
+    border-radius: 12px;
+    padding: 34px 28px;
+    text-align: left;
+    color: var(--ink-soft);
+    font-size: 14.5px;
+    max-width: 520px;
+  }
+  .state-msg strong{ display: block; color: var(--ink); font-size: 15.5px; margin-bottom: 6px; }
+  .state-msg.state-msg--error{ border-color: var(--brick); color: var(--brick); }
+  .state-msg.state-msg--error strong{ color: var(--brick); }
+
+  footer{
+    border-top: 1px solid var(--line);
+    padding: 22px 0 40px;
+    font-size: 12.5px;
+    color: var(--muted);
+  }
+
+</style>
+</head>
+<body>
+
+  <header class="nav">
+    <div class="wrap nav__row">
+      <div class="nav__mark">ashra<span>y</span></div>
+      <div class="nav__meta" id="navMeta">loading inventory…</div>
+    </div>
+  </header>
+
+  <section class="hero wrap">
+    <h1>Find a home by describing it, not filtering for it.</h1>
+    <p class="lede">
+      Tell Ashray what you're looking for in your own words — budget, city,
+      how close to the metro, what you can compromise on. It reads the full
+      inventory and ranks what actually fits.
+    </p>
+
+    <form class="ask" id="askForm">
+      <input
+        class="ask__input"
+        id="askInput"
+        type="text"
+        autocomplete="off"
+        placeholder="e.g. 3 BHK in Gurgaon under 1.2 crore, close to the metro"
+      >
+      <button class="ask__submit" id="askSubmit" type="submit">Ask</button>
+    </form>
+
+    <div class="examples" id="exampleChips"></div>
+
+    <ol class="trail" id="trail" hidden></ol>
+  </section>
+
+  <div class="wrap board">
+    <aside class="rail">
+      <h2>Browse &amp; filter</h2>
+      <form id="filterForm">
+        <div class="field">
+          <label for="fCity">City</label>
+          <select id="fCity"><option value="">Any city</option></select>
+        </div>
+        <div class="field">
+          <label for="fType">Property type</label>
+          <select id="fType"><option value="">Any type</option></select>
+        </div>
+        <div class="field">
+          <label for="fBhk">Bedrooms</label>
+          <select id="fBhk"><option value="0">Any</option></select>
+        </div>
+        <div class="field">
+          <label for="fPrice">Max budget (₹)</label>
+          <input id="fPrice" type="number" min="0" step="100000" placeholder="e.g. 12000000">
+        </div>
+        <div class="field">
+          <label for="fArea">Min area (sq ft)</label>
+          <input id="fArea" type="number" min="0" step="50" placeholder="e.g. 1200">
+        </div>
+        <div class="field">
+          <label for="fFurnished">Furnishing</label>
+          <select id="fFurnished"><option value="">Any</option></select>
+        </div>
+        <div class="field">
+          <label for="fMetro">Within distance of metro (km)</label>
+          <input id="fMetro" type="number" min="0" step="0.5" placeholder="e.g. 3">
+        </div>
+        <div class="field field--check">
+          <input id="fParking" type="checkbox">
+          <label for="fParking">Must have parking</label>
+        </div>
+        <button class="rail__apply" type="submit">Apply filters</button>
+        <button class="rail__clear" type="button" id="clearFilters">Clear filters</button>
+      </form>
+    </aside>
+
+    <main>
+      <div class="results__head">
+        <h2 id="resultsTitle">Nothing searched yet</h2>
+        <span class="results__count" id="resultsCount"></span>
+      </div>
+      <div id="resultsArea">
+        <div class="state-msg">
+          <strong>Start with a question or a filter.</strong>
+          Ask Ashray something in plain language above, or set filters on the
+          left and apply them — either way, results land here.
+        </div>
+      </div>
+    </main>
+  </div>
+
+  <footer class="wrap">
+    Ashray — a search layer over a fictional NCR property inventory. Prices and listings are illustrative.
+  </footer>
+
+<script>
+(function(){
+
+  const SESSION_KEY = "ashray_session_id";
+  let sessionId = localStorage.getItem(SESSION_KEY);
+
+  const els = {
+    navMeta: document.getElementById("navMeta"),
+    askForm: document.getElementById("askForm"),
+    askInput: document.getElementById("askInput"),
+    askSubmit: document.getElementById("askSubmit"),
+    exampleChips: document.getElementById("exampleChips"),
+    trail: document.getElementById("trail"),
+    filterForm: document.getElementById("filterForm"),
+    clearFilters: document.getElementById("clearFilters"),
+    fCity: document.getElementById("fCity"),
+    fType: document.getElementById("fType"),
+    fBhk: document.getElementById("fBhk"),
+    fPrice: document.getElementById("fPrice"),
+    fArea: document.getElementById("fArea"),
+    fFurnished: document.getElementById("fFurnished"),
+    fMetro: document.getElementById("fMetro"),
+    fParking: document.getElementById("fParking"),
+    resultsTitle: document.getElementById("resultsTitle"),
+    resultsCount: document.getElementById("resultsCount"),
+    resultsArea: document.getElementById("resultsArea"),
+  };
+
+  const EXAMPLES = [
+    "3 BHK in Gurgaon under 1.2 crore, near metro",
+    "Cheapest 2 BHK in Noida with parking",
+    "Villa in Gurgaon, semi-furnished",
+    "Something bigger than 1500 sq ft in Delhi",
+  ];
+
+  const askedQueries = [];
+
+  // ---------------------------------------------------------
+  // SETUP
+  // ---------------------------------------------------------
+
+  async function ensureSession(){
+    if (sessionId) return;
+    try{
+      const res = await fetch("/api/new-session", { method: "POST" });
+      const data = await res.json();
+      sessionId = data.session_id;
+      localStorage.setItem(SESSION_KEY, sessionId);
+    }catch(err){
+      console.error("Could not start a session", err);
+    }
+  }
+
+  function renderExamples(){
+    els.exampleChips.innerHTML = "";
+    EXAMPLES.forEach(q => {
+      const btn = document.createElement("button");
+      btn.type = "button";
+      btn.className = "example-chip";
+      btn.textContent = q;
+      btn.addEventListener("click", () => {
+        els.askInput.value = q;
+        els.askInput.focus();
+      });
+      els.exampleChips.appendChild(btn);
+    });
+  }
+
+  async function loadMeta(){
+    try{
+      const res = await fetch("/api/meta");
+      if (!res.ok) throw new Error("meta request failed");
+      const data = await res.json();
+
+      els.navMeta.textContent = `${data.total_properties} listings across ${data.cities.length} cities`;
+
+      fillSelect(els.fCity, data.cities);
+      fillSelect(els.fType, data.property_types);
+      fillSelect(els.fFurnished, data.furnished_options);
+      data.bhk_options.forEach(bhk => {
+        const opt = document.createElement("option");
+        opt.value = bhk;
+        opt.textContent = `${bhk} BHK`;
+        els.fBhk.appendChild(opt);
+      });
+    }catch(err){
+      els.navMeta.textContent = "inventory unavailable";
+      console.error(err);
+    }
+  }
+
+  function fillSelect(select, values){
+    values.forEach(v => {
+      const opt = document.createElement("option");
+      opt.value = v;
+      opt.textContent = v;
+      select.appendChild(opt);
+    });
+  }
+
+  // ---------------------------------------------------------
+  // FORMATTING HELPERS
+  // ---------------------------------------------------------
+
+  function formatPrice(price){
+    if (typeof price !== "number") return String(price);
+    if (price >= 1e7) return `₹${(price / 1e7).toFixed(2)} Cr`;
+    if (price >= 1e5) return `₹${(price / 1e5).toFixed(1)} Lakh`;
+    return `₹${price.toLocaleString("en-IN")}`;
+  }
+
+  function amenityList(raw){
+    if (!raw) return [];
+    return raw.split(";").map(s => s.trim()).filter(Boolean);
+  }
+
+  // ---------------------------------------------------------
+  // CARD RENDERING
+  // ---------------------------------------------------------
+
+  function buildCard(property, matchInfo){
+    const card = document.createElement("article");
+    card.className = "card";
+
+    const top = document.createElement("div");
+    top.className = "card__top";
+
+    const titleWrap = document.createElement("div");
+
+    if (matchInfo){
+      const pill = document.createElement("span");
+      pill.className = `pill pill--${matchInfo.match_type}`;
+      pill.textContent = matchInfo.match_type === "exact" ? "Exact match"
+        : matchInfo.match_type === "close" ? "Close match"
+        : "Alternative";
+      titleWrap.appendChild(pill);
+    }
+
+    const title = document.createElement("h3");
+    title.className = "card__title";
+    title.style.marginTop = matchInfo ? "6px" : "0";
+    title.textContent = property.title || "Untitled property";
+    titleWrap.appendChild(title);
+
+    const price = document.createElement("div");
+    price.className = "card__price";
+    price.textContent = formatPrice(property.price);
+
+    top.appendChild(titleWrap);
+    top.appendChild(price);
+    card.appendChild(top);
+
+    const place = document.createElement("p");
+    place.className = "card__place";
+    place.textContent = `${property.location || ""}, ${property.city || ""}. About ${property.metro_distance_km ?? "an unknown"} km from the metro.`;
+    card.appendChild(place);
+
+    const spec = document.createElement("p");
+    spec.className = "card__spec";
+    const furnishBit = property.furnished ? property.furnished.toLowerCase() : "furnishing unspecified";
+    const parkingBit = property.parking ? "parking included" : "no parking";
+    spec.textContent = `${property.bhk ?? "?"} BHK ${property.property_type || ""}, ${property.area_sqft ?? "?"} sq ft. ${furnishBit}, ${parkingBit}.`;
+    card.appendChild(spec);
+
+    if (matchInfo && matchInfo.why_match){
+      const why = document.createElement("p");
+      why.className = "card__why";
+      why.textContent = matchInfo.why_match;
+      card.appendChild(why);
+    }
+
+    const toggle = document.createElement("button");
+    toggle.className = "card__toggle";
+    toggle.type = "button";
+    toggle.textContent = "View details";
+
+    const detail = document.createElement("div");
+    detail.className = "card__detail";
+
+    const desc = document.createElement("p");
+    desc.textContent = property.description || "No further description available.";
+    detail.appendChild(desc);
+
+    const amenities = amenityList(property.amenities);
+    if (amenities.length){
+      const list = document.createElement("ul");
+      list.className = "card__amenities";
+      amenities.forEach(a => {
+        const li = document.createElement("li");
+        li.textContent = a;
+        list.appendChild(li);
+      });
+      detail.appendChild(list);
+    }
+
+    if (property.availability){
+      const avail = document.createElement("p");
+      avail.style.margin = "0";
+      avail.style.fontSize = "12.5px";
+      avail.textContent = property.availability;
+      detail.appendChild(avail);
+    }
+
+    toggle.addEventListener("click", () => {
+      const open = detail.classList.toggle("open");
+      toggle.textContent = open ? "Hide details" : "View details";
+    });
+
+    card.appendChild(toggle);
+    card.appendChild(detail);
+
+    return card;
+  }
+
+  function renderGrid(properties, matchInfoByPropertyId){
+    els.resultsArea.innerHTML = "";
+
+    if (!properties.length){
+      const msg = document.createElement("div");
+      msg.className = "state-msg";
+      msg.innerHTML = "<strong>No matches.</strong> Nothing in the inventory fits that combination. Try loosening the budget or the location.";
+      els.resultsArea.appendChild(msg);
+      return;
+    }
+
+    const grid = document.createElement("div");
+    grid.className = "grid";
+
+    properties.forEach(property => {
+      const id = property.property_id || property.id;
+      const matchInfo = matchInfoByPropertyId ? matchInfoByPropertyId[id] : null;
+      grid.appendChild(buildCard(property, matchInfo));
+    });
+
+    els.resultsArea.appendChild(grid);
+  }
+
+  function renderState(kind, title, body){
+    els.resultsArea.innerHTML = "";
+    const msg = document.createElement("div");
+    msg.className = "state-msg" + (kind === "error" ? " state-msg--error" : "");
+    msg.innerHTML = `<strong>${title}</strong>${body}`;
+    els.resultsArea.appendChild(msg);
+  }
+
+  function setResultsHead(title, count){
+    els.resultsTitle.textContent = title;
+    els.resultsCount.textContent = count === null ? "" : `${count} shown`;
+  }
+
+  // ---------------------------------------------------------
+  // AI SEARCH
+  // ---------------------------------------------------------
+
+  function renderTrail(){
+    if (!askedQueries.length){
+      els.trail.hidden = true;
+      return;
+    }
+    els.trail.hidden = false;
+    els.trail.innerHTML = "";
+    askedQueries.forEach((q, i) => {
+      const li = document.createElement("li");
+      li.textContent = q;
+      if (i === askedQueries.length - 1) li.classList.add("current");
+      els.trail.appendChild(li);
+    });
+  }
+
+  async function runAISearch(message){
+    await ensureSession();
+
+    els.askSubmit.disabled = true;
+    els.askSubmit.textContent = "Reading listings…";
+    setResultsHead("Asking Ashray…", null);
+    renderState("loading", "One moment.", "Ashray is matching your ask against the full inventory.");
+
+    try{
+      const res = await fetch("/api/ai-search", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ session_id: sessionId, message }),
+      });
+
+      if (!res.ok){
+        const errBody = await res.json().catch(() => ({}));
+        throw new Error(errBody.detail || `request failed (${res.status})`);
+      }
+
+      const data = await res.json();
+      sessionId = data.session_id;
+      localStorage.setItem(SESSION_KEY, sessionId);
+
+      askedQueries.push(message);
+      renderTrail();
+
+      const matchInfoByPropertyId = {};
+      const properties = data.results.map(r => {
+        matchInfoByPropertyId[r.property_id] = {
+          match_type: r.match_type,
+          why_match: r.why_match,
+          match_score: r.match_score,
+        };
+        return r.property;
+      });
+
+      setResultsHead("Ashray's picks", data.total_matches);
+      renderGrid(properties, matchInfoByPropertyId);
+
+    }catch(err){
+      console.error(err);
+      setResultsHead("Search failed", null);
+      renderState(
+        "error",
+        "Ashray couldn't complete that search.",
+        `The backend, the MCP server, or the OpenAI call may be unreachable. Details: ${err.message}`
+      );
+    }finally{
+      els.askSubmit.disabled = false;
+      els.askSubmit.textContent = "Ask";
+    }
+  }
+
+  els.askForm.addEventListener("submit", (e) => {
+    e.preventDefault();
+    const message = els.askInput.value.trim();
+    if (!message) return;
+    runAISearch(message);
+    els.askInput.value = "";
+  });
+
+  // ---------------------------------------------------------
+  // FILTER SEARCH
+  // ---------------------------------------------------------
+
+  async function runFilterSearch(){
+    const params = new URLSearchParams();
+    if (els.fCity.value) params.set("city", els.fCity.value);
+    if (els.fType.value) params.set("property_type", els.fType.value);
+    if (els.fBhk.value && els.fBhk.value !== "0") params.set("bhk", els.fBhk.value);
+    if (els.fPrice.value) params.set("max_price", els.fPrice.value);
+    if (els.fArea.value) params.set("min_area", els.fArea.value);
+    if (els.fFurnished.value) params.set("furnished", els.fFurnished.value);
+    if (els.fMetro.value) params.set("max_metro_distance", els.fMetro.value);
+    if (els.fParking.checked) params.set("parking", "true");
+
+    setResultsHead("Filtering…", null);
+    renderState("loading", "One moment.", "Checking the inventory against your filters.");
+
+    try{
+      const res = await fetch(`/api/filter-search?${params.toString()}`);
+      if (!res.ok){
+        const errBody = await res.json().catch(() => ({}));
+        throw new Error(errBody.detail || `request failed (${res.status})`);
+      }
+      const data = await res.json();
+
+      setResultsHead("Filtered listings", data.total);
+      renderGrid(data.properties, null);
+
+    }catch(err){
+      console.error(err);
+      setResultsHead("Search failed", null);
+      renderState(
+        "error",
+        "The filter search didn't go through.",
+        `The backend or MCP server may be unreachable. Details: ${err.message}`
+      );
+    }
+  }
+
+  els.filterForm.addEventListener("submit", (e) => {
+    e.preventDefault();
+    runFilterSearch();
+  });
+
+  els.clearFilters.addEventListener("click", () => {
+    els.filterForm.reset();
+  });
+
+  // ---------------------------------------------------------
+  // INIT
+  // ---------------------------------------------------------
+
+  renderExamples();
+  loadMeta();
+  ensureSession();
+
+})();
+</script>
+
+</body>
+</html>
