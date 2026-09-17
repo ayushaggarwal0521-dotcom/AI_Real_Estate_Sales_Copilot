@@ -30,6 +30,7 @@ from real_estate_client import (
     get_property_details,
 )
 from property_llm import find_properties_for_customer
+from property_images import attach_images
 
 
 # ---------------------------------------------------------
@@ -170,7 +171,7 @@ def filter_search(
 
     return {
         "total": len(properties),
-        "properties": properties,
+        "properties": [attach_images(p) for p in properties],
     }
 
 
@@ -191,7 +192,7 @@ def property_details(property_id: str):
     if not details or details.get("success") is False:
         raise HTTPException(status_code=404, detail="Property not found.")
 
-    return details
+    return attach_images(details)
 
 
 # ---------------------------------------------------------
@@ -219,6 +220,9 @@ def ai_search(payload: AISearchRequest):
     # where the turn actually gets remembered for the next request.
     history.append({"role": "user", "content": payload.message})
     history.append({"role": "assistant", "content": json.dumps(results)})
+
+    for result in results["results"]:
+        attach_images(result.get("property"))
 
     return {
         "session_id": session_id,
