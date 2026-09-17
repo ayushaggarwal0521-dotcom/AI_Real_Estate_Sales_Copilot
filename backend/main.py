@@ -30,7 +30,7 @@ from real_estate_client import (
     get_property_details,
 )
 from property_llm import find_properties_for_customer
-from property_imaages import attach_images
+from property_images import attach_images
 
 
 # ---------------------------------------------------------
