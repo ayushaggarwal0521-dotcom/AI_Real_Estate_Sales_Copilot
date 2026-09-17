@@ -7,7 +7,8 @@ from whatsapp_agent import (
     create_new_customer_state,
     handle_message
 )
-
+from property_images import get_property_images
+from customer_manager import get_or_create_customer
 load_dotenv()
 
 app = Flask(__name__)
@@ -33,7 +34,7 @@ GRAPH_API_URL = (
 # ============================================================
 
 customer_states = {}
-
+processed_messages = set()
 
 # ============================================================
 # WEBHOOK VERIFICATION
@@ -86,15 +87,29 @@ def receive_message():
 
         messages = value.get("messages")
 
+        if not messages:
+            print("Ignoring webhook event without messages.")
+            return {"status": "ignored"}, 200
+
+
+        
         # ----------------------------------------------------
         # IGNORE EVENTS WITHOUT MESSAGES
         # ----------------------------------------------------
 
-        if not messages:
-
-            return "EVENT_RECEIVED", 200
-
         message = messages[0]
+        message_id = message["id"]
+        if message_id in processed_messages:
+            print("Duplicate message ignored.")
+            return {"status": "duplicate"}, 200
+
+        processed_messages.add(message_id)
+
+# ----------------------------------------------------
+# EXTRACT MESSAGE DATA
+# ----------------------------------------------------
+
+        
 
         sender = message["from"]
 
@@ -118,6 +133,11 @@ def receive_message():
             )
 
         state = customer_states[sender]
+        customer_id = get_or_create_customer(
+            sender
+        )
+
+        print(f"CRM CUSTOMER ID: {customer_id}")
 
 
         # ====================================================
@@ -422,7 +442,34 @@ def send_whatsapp_message(to, message):
 
     return response
 
+def send_whatsapp_image(to, image_url, caption=""):
 
+    headers = {
+        "Authorization": f"Bearer {WHATSAPP_ACCESS_TOKEN}",
+        "Content-Type": "application/json"
+    }
+
+    payload = {
+        "messaging_product": "whatsapp",
+        "to": to,
+        "type": "image",
+        "image": {
+            "link": image_url,
+            "caption": caption
+        }
+    }
+
+    response = requests.post(
+        GRAPH_API_URL,
+        headers=headers,
+        json=payload
+    )
+
+    print("\nMETA IMAGE RESPONSE:")
+    print(response.status_code)
+    print(response.text)
+
+    return response
 # ============================================================
 # SEND WHATSAPP BUTTONS
 # ============================================================
@@ -673,11 +720,20 @@ def send_ai_results(
                 "Unknown"
             )
         )
+       
 
         title = property_data.get(
             "title",
             "Property"
         )
+        images = get_property_images(property_id)
+
+        if images:
+            send_whatsapp_image(
+                to,
+                images[0],
+                f"🏠 {title}"
+            )
 
         city = property_data.get(
             "city",
