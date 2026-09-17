@@ -3,16 +3,13 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
-<title>Ashray — describe the home you want</title>
+<title>Ashray — browse homes by city</title>
 <link rel="icon" href="data:,">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,400;9..144,500;9..144,600&family=IBM+Plex+Sans:wght@400;500;600&family=IBM+Plex+Mono:wght@400;500&display=swap" rel="stylesheet">
 <style>
 
-  /* ---------------------------------------------------------
-     TOKENS
-  --------------------------------------------------------- */
   :root{
     --ink:        #1C2321;
     --ink-soft:   #445048;
@@ -57,18 +54,12 @@
     padding: 0 28px;
   }
 
-  /* ---------------------------------------------------------
-     NAV
-  --------------------------------------------------------- */
-  header.nav{
-    padding: 22px 0 0;
-  }
+  header.nav{ padding: 22px 0 0; }
   .nav__row{
     display: flex;
     align-items: baseline;
     justify-content: space-between;
-    padding-bottom: 18px;
-    border-bottom: 1px solid var(--line);
+    padding-bottom: 14px;
   }
   .nav__mark{
     font-family: var(--serif);
@@ -82,121 +73,47 @@
     font-size: 12.5px;
     color: var(--muted);
   }
-
-  /* ---------------------------------------------------------
-     HERO
-  --------------------------------------------------------- */
-  .hero{
-    padding: 56px 0 40px;
-  }
-  .hero h1{
-    font-family: var(--serif);
-    font-weight: 500;
-    font-size: clamp(34px, 5vw, 54px);
-    line-height: 1.08;
-    letter-spacing: -0.01em;
-    max-width: 15ch;
-    margin: 0 0 16px;
-  }
-  .hero p.lede{
-    max-width: 52ch;
-    color: var(--ink-soft);
-    font-size: 17px;
-    margin: 0 0 34px;
-  }
-
-  .ask{
-    background: var(--surface);
-    border: 1px solid var(--line);
-    border-radius: 16px;
-    padding: 10px;
-    display: flex;
-    gap: 8px;
-    max-width: 720px;
-    box-shadow: 0 1px 0 var(--line-soft);
-  }
-  .ask__input{
-    flex: 1;
-    border: none;
-    background: transparent;
-    font-family: var(--sans);
-    font-size: 15.5px;
-    padding: 12px 14px;
-    color: var(--ink);
-  }
-  .ask__input::placeholder{ color: #8b958f; }
-  .ask__input:focus{ outline: none; }
-  .ask__submit{
-    border: none;
-    background: var(--pine);
-    color: var(--surface);
+  .nav__lede{
+    margin: 0 0 18px;
+    max-width: 62ch;
     font-size: 14.5px;
-    font-weight: 500;
-    padding: 12px 22px;
-    border-radius: 999px;
-    cursor: pointer;
-    transition: background 120ms ease;
-    white-space: nowrap;
+    color: var(--ink-soft);
   }
-  .ask__submit:hover{ background: var(--pine-light); }
-  .ask__submit:disabled{ opacity: 0.55; cursor: default; }
 
-  .examples{
+  .citybar{
+    border-top: 1px solid var(--line);
+    border-bottom: 1px solid var(--line);
+    padding: 14px 0;
+    margin-bottom: 28px;
+  }
+  .citybar__row{
     display: flex;
     flex-wrap: wrap;
     gap: 8px;
-    margin-top: 14px;
   }
-  .example-chip{
+  .city-btn{
     border: 1px solid var(--line);
-    background: transparent;
+    background: var(--surface);
     color: var(--ink-soft);
-    font-size: 13px;
-    padding: 7px 13px;
+    font-size: 13.5px;
+    font-weight: 500;
+    padding: 8px 16px;
     border-radius: 999px;
     cursor: pointer;
+    transition: background 120ms ease, color 120ms ease, border-color 120ms ease;
   }
-  .example-chip:hover{ border-color: var(--pine); color: var(--pine); }
-
-  .hero__stat{
-    margin-top: 22px;
-    font-family: var(--mono);
-    font-size: 12.5px;
-    color: var(--muted);
-  }
-
-  /* ---------------------------------------------------------
-     CONVERSATION TRAIL
-  --------------------------------------------------------- */
-  .trail{
-    max-width: 720px;
-    margin: 18px 0 0;
-    padding: 0;
-    list-style: none;
-    display: flex;
-    flex-direction: column;
-    gap: 6px;
-  }
-  .trail li{
-    font-size: 13.5px;
-    color: var(--muted);
-    padding-left: 14px;
-    border-left: 2px solid var(--line);
-  }
-  .trail li.current{
-    color: var(--ink);
-    border-left-color: var(--brass);
-    font-weight: 500;
+  .city-btn:hover{ border-color: var(--pine); }
+  .city-btn.active{
+    background: var(--pine);
+    border-color: var(--pine);
+    color: var(--surface);
   }
 
-  /* ---------------------------------------------------------
-     LAYOUT: RAIL + RESULTS
-  --------------------------------------------------------- */
   .board{
     display: grid;
     grid-template-columns: 240px 1fr;
     gap: 36px;
-    padding: 8px 0 80px;
+    padding: 0 0 100px;
     align-items: start;
   }
   @media (max-width: 860px){
@@ -214,11 +131,14 @@
   .rail h2{
     font-size: 14px;
     font-weight: 600;
+    margin: 0 0 4px;
+  }
+  .rail__scope{
+    font-size: 12.5px;
+    color: var(--muted);
     margin: 0 0 16px;
   }
-  .field{
-    margin-bottom: 14px;
-  }
+  .field{ margin-bottom: 14px; }
   .field label{
     display: block;
     font-size: 12.5px;
@@ -270,9 +190,6 @@
     text-underline-offset: 2px;
   }
 
-  /* ---------------------------------------------------------
-     RESULTS
-  --------------------------------------------------------- */
   .results__head{
     display: flex;
     align-items: baseline;
@@ -396,9 +313,6 @@
     color: var(--ink-soft);
   }
 
-  /* ---------------------------------------------------------
-     STATE MESSAGES
-  --------------------------------------------------------- */
   .state-msg{
     border: 1px dashed var(--line);
     border-radius: 12px;
@@ -419,49 +333,160 @@
     color: var(--muted);
   }
 
+  .ask-fab{
+    position: fixed;
+    right: 24px;
+    bottom: 24px;
+    z-index: 40;
+    display: flex;
+    align-items: center;
+    gap: 9px;
+    background: var(--pine);
+    color: var(--surface);
+    border: none;
+    padding: 14px 20px;
+    border-radius: 999px;
+    font-size: 14px;
+    font-weight: 500;
+    cursor: pointer;
+    box-shadow: 0 6px 18px rgba(28,35,33,0.22);
+  }
+  .ask-fab:hover{ background: var(--pine-light); }
+  .ask-fab__dot{
+    width: 8px;
+    height: 8px;
+    border-radius: 50%;
+    background: var(--brass-soft);
+  }
+
+  .ask-panel{
+    position: fixed;
+    right: 24px;
+    bottom: 88px;
+    z-index: 40;
+    width: min(380px, calc(100vw - 48px));
+    max-height: min(560px, calc(100vh - 140px));
+    overflow-y: auto;
+    background: var(--surface);
+    border: 1px solid var(--line);
+    border-radius: 16px;
+    box-shadow: 0 16px 40px rgba(28,35,33,0.22);
+    padding: 20px;
+  }
+  .ask-panel[hidden]{ display: none; }
+
+  .ask-panel__title{
+    font-family: var(--serif);
+    font-size: 18px;
+    font-weight: 500;
+    margin: 0 0 4px;
+  }
+  .ask-panel__lede{
+    font-size: 13px;
+    color: var(--muted);
+    margin: 0 0 14px;
+  }
+
+  .ask{
+    background: var(--stone);
+    border: 1px solid var(--line);
+    border-radius: 12px;
+    padding: 6px;
+    display: flex;
+    gap: 6px;
+  }
+  .ask__input{
+    flex: 1;
+    border: none;
+    background: transparent;
+    font-family: var(--sans);
+    font-size: 14px;
+    padding: 9px 10px;
+    color: var(--ink);
+    min-width: 0;
+  }
+  .ask__input::placeholder{ color: #8b958f; }
+  .ask__input:focus{ outline: none; }
+  .ask__submit{
+    border: none;
+    background: var(--pine);
+    color: var(--surface);
+    font-size: 13.5px;
+    font-weight: 500;
+    padding: 9px 16px;
+    border-radius: 999px;
+    cursor: pointer;
+    transition: background 120ms ease;
+    white-space: nowrap;
+  }
+  .ask__submit:hover{ background: var(--pine-light); }
+  .ask__submit:disabled{ opacity: 0.55; cursor: default; }
+
+  .examples{
+    display: flex;
+    flex-wrap: wrap;
+    gap: 6px;
+    margin-top: 12px;
+  }
+  .example-chip{
+    border: 1px solid var(--line);
+    background: transparent;
+    color: var(--ink-soft);
+    font-size: 12px;
+    padding: 6px 11px;
+    border-radius: 999px;
+    cursor: pointer;
+    text-align: left;
+  }
+  .example-chip:hover{ border-color: var(--pine); color: var(--pine); }
+
+  .trail{
+    margin: 14px 0 0;
+    padding: 0;
+    list-style: none;
+    display: flex;
+    flex-direction: column;
+    gap: 6px;
+  }
+  .trail li{
+    font-size: 12.5px;
+    color: var(--muted);
+    padding-left: 12px;
+    border-left: 2px solid var(--line);
+  }
+  .trail li.current{
+    color: var(--ink);
+    border-left-color: var(--brass);
+    font-weight: 500;
+  }
+
 </style>
 </head>
 <body>
 
   <header class="nav">
-    <div class="wrap nav__row">
-      <div class="nav__mark">ashra<span>y</span></div>
-      <div class="nav__meta" id="navMeta">loading inventory…</div>
+    <div class="wrap">
+      <div class="nav__row">
+        <div class="nav__mark">ashra<span>y</span></div>
+        <div class="nav__meta" id="navMeta">loading inventory…</div>
+      </div>
+      <p class="nav__lede">
+        Browse listings by city below, then narrow with filters on the left —
+        or use the Ask AI button in the corner to describe what you want in
+        plain words instead.
+      </p>
     </div>
   </header>
 
-  <section class="hero wrap">
-    <h1>Find a home by describing it, not filtering for it.</h1>
-    <p class="lede">
-      Tell Ashray what you're looking for in your own words — budget, city,
-      how close to the metro, what you can compromise on. It reads the full
-      inventory and ranks what actually fits.
-    </p>
-
-    <form class="ask" id="askForm">
-      <input
-        class="ask__input"
-        id="askInput"
-        type="text"
-        autocomplete="off"
-        placeholder="e.g. 3 BHK in Gurgaon under 1.2 crore, close to the metro"
-      >
-      <button class="ask__submit" id="askSubmit" type="submit">Ask</button>
-    </form>
-
-    <div class="examples" id="exampleChips"></div>
-
-    <ol class="trail" id="trail" hidden></ol>
+  <section class="citybar">
+    <div class="wrap citybar__row" id="cityBar"></div>
   </section>
 
   <div class="wrap board">
     <aside class="rail">
-      <h2>Browse &amp; filter</h2>
+      <h2>Filters</h2>
+      <p class="rail__scope" id="railScope">Applied within: all cities</p>
       <form id="filterForm">
-        <div class="field">
-          <label for="fCity">City</label>
-          <select id="fCity"><option value="">Any city</option></select>
-        </div>
         <div class="field">
           <label for="fType">Property type</label>
           <select id="fType"><option value="">Any type</option></select>
@@ -497,14 +522,13 @@
 
     <main>
       <div class="results__head">
-        <h2 id="resultsTitle">Nothing searched yet</h2>
+        <h2 id="resultsTitle">All cities</h2>
         <span class="results__count" id="resultsCount"></span>
       </div>
       <div id="resultsArea">
         <div class="state-msg">
-          <strong>Start with a question or a filter.</strong>
-          Ask Ashray something in plain language above, or set filters on the
-          left and apply them — either way, results land here.
+          <strong>Loading listings…</strong>
+          One moment while Ashray reads the inventory.
         </div>
       </div>
     </main>
@@ -514,22 +538,52 @@
     Ashray — a search layer over a fictional NCR property inventory. Prices and listings are illustrative.
   </footer>
 
+  <button class="ask-fab" id="askFab" type="button">
+    <span class="ask-fab__dot"></span>
+    Ask AI
+  </button>
+
+  <div class="ask-panel" id="askPanel" hidden>
+    <p class="ask-panel__title">Ask Ashray</p>
+    <p class="ask-panel__lede">
+      Describe what you want in your own words. Results replace the grid on the left.
+    </p>
+    <form class="ask" id="askForm">
+      <input
+        class="ask__input"
+        id="askInput"
+        type="text"
+        autocomplete="off"
+        placeholder="3 BHK in Gurgaon under 1.2 Cr…"
+      >
+      <button class="ask__submit" id="askSubmit" type="submit">Ask</button>
+    </form>
+    <div class="examples" id="exampleChips"></div>
+    <ol class="trail" id="trail" hidden></ol>
+  </div>
+
 <script>
 (function(){
 
   const SESSION_KEY = "ashray_session_id";
   let sessionId = localStorage.getItem(SESSION_KEY);
+  let selectedCity = "";
 
   const els = {
     navMeta: document.getElementById("navMeta"),
+    cityBar: document.getElementById("cityBar"),
+    railScope: document.getElementById("railScope"),
+
+    askFab: document.getElementById("askFab"),
+    askPanel: document.getElementById("askPanel"),
     askForm: document.getElementById("askForm"),
     askInput: document.getElementById("askInput"),
     askSubmit: document.getElementById("askSubmit"),
     exampleChips: document.getElementById("exampleChips"),
     trail: document.getElementById("trail"),
+
     filterForm: document.getElementById("filterForm"),
     clearFilters: document.getElementById("clearFilters"),
-    fCity: document.getElementById("fCity"),
     fType: document.getElementById("fType"),
     fBhk: document.getElementById("fBhk"),
     fPrice: document.getElementById("fPrice"),
@@ -537,6 +591,7 @@
     fFurnished: document.getElementById("fFurnished"),
     fMetro: document.getElementById("fMetro"),
     fParking: document.getElementById("fParking"),
+
     resultsTitle: document.getElementById("resultsTitle"),
     resultsCount: document.getElementById("resultsCount"),
     resultsArea: document.getElementById("resultsArea"),
@@ -550,10 +605,6 @@
   ];
 
   const askedQueries = [];
-
-  // ---------------------------------------------------------
-  // SETUP
-  // ---------------------------------------------------------
 
   async function ensureSession(){
     if (sessionId) return;
@@ -582,6 +633,34 @@
     });
   }
 
+  function renderCityTabs(cities){
+    els.cityBar.innerHTML = "";
+
+    const allBtn = document.createElement("button");
+    allBtn.type = "button";
+    allBtn.className = "city-btn active";
+    allBtn.textContent = "All cities";
+    allBtn.addEventListener("click", () => selectCity("", allBtn));
+    els.cityBar.appendChild(allBtn);
+
+    cities.forEach(city => {
+      const btn = document.createElement("button");
+      btn.type = "button";
+      btn.className = "city-btn";
+      btn.textContent = city;
+      btn.addEventListener("click", () => selectCity(city, btn));
+      els.cityBar.appendChild(btn);
+    });
+  }
+
+  function selectCity(city, btnEl){
+    selectedCity = city;
+    document.querySelectorAll(".city-btn").forEach(b => b.classList.remove("active"));
+    btnEl.classList.add("active");
+    els.railScope.textContent = `Applied within: ${city || "all cities"}`;
+    runFilterSearch();
+  }
+
   async function loadMeta(){
     try{
       const res = await fetch("/api/meta");
@@ -590,7 +669,7 @@
 
       els.navMeta.textContent = `${data.total_properties} listings across ${data.cities.length} cities`;
 
-      fillSelect(els.fCity, data.cities);
+      renderCityTabs(data.cities);
       fillSelect(els.fType, data.property_types);
       fillSelect(els.fFurnished, data.furnished_options);
       data.bhk_options.forEach(bhk => {
@@ -614,10 +693,6 @@
     });
   }
 
-  // ---------------------------------------------------------
-  // FORMATTING HELPERS
-  // ---------------------------------------------------------
-
   function formatPrice(price){
     if (typeof price !== "number") return String(price);
     if (price >= 1e7) return `₹${(price / 1e7).toFixed(2)} Cr`;
@@ -629,10 +704,6 @@
     if (!raw) return [];
     return raw.split(";").map(s => s.trim()).filter(Boolean);
   }
-
-  // ---------------------------------------------------------
-  // CARD RENDERING
-  // ---------------------------------------------------------
 
   function buildCard(property, matchInfo){
     const card = document.createElement("article");
@@ -734,7 +805,7 @@
     if (!properties.length){
       const msg = document.createElement("div");
       msg.className = "state-msg";
-      msg.innerHTML = "<strong>No matches.</strong> Nothing in the inventory fits that combination. Try loosening the budget or the location.";
+      msg.innerHTML = "<strong>No matches.</strong> Nothing fits that combination. Try clearing a filter or two — with a smaller inventory, stacking several filters at once often comes up empty.";
       els.resultsArea.appendChild(msg);
       return;
     }
@@ -764,9 +835,15 @@
     els.resultsCount.textContent = count === null ? "" : `${count} shown`;
   }
 
-  // ---------------------------------------------------------
-  // AI SEARCH
-  // ---------------------------------------------------------
+  els.askFab.addEventListener("click", () => {
+    const isHidden = els.askPanel.hasAttribute("hidden");
+    if (isHidden){
+      els.askPanel.removeAttribute("hidden");
+      els.askInput.focus();
+    }else{
+      els.askPanel.setAttribute("hidden", "");
+    }
+  });
 
   function renderTrail(){
     if (!askedQueries.length){
@@ -787,7 +864,7 @@
     await ensureSession();
 
     els.askSubmit.disabled = true;
-    els.askSubmit.textContent = "Reading listings…";
+    els.askSubmit.textContent = "Reading…";
     setResultsHead("Asking Ashray…", null);
     renderState("loading", "One moment.", "Ashray is matching your ask against the full inventory.");
 
@@ -823,6 +900,9 @@
       setResultsHead("Ashray's picks", data.total_matches);
       renderGrid(properties, matchInfoByPropertyId);
 
+      document.querySelectorAll(".city-btn").forEach(b => b.classList.remove("active"));
+      els.railScope.textContent = "Ask AI results are not affected by filters on the left";
+
     }catch(err){
       console.error(err);
       setResultsHead("Search failed", null);
@@ -845,13 +925,9 @@
     els.askInput.value = "";
   });
 
-  // ---------------------------------------------------------
-  // FILTER SEARCH
-  // ---------------------------------------------------------
-
   async function runFilterSearch(){
     const params = new URLSearchParams();
-    if (els.fCity.value) params.set("city", els.fCity.value);
+    if (selectedCity) params.set("city", selectedCity);
     if (els.fType.value) params.set("property_type", els.fType.value);
     if (els.fBhk.value && els.fBhk.value !== "0") params.set("bhk", els.fBhk.value);
     if (els.fPrice.value) params.set("max_price", els.fPrice.value);
@@ -860,8 +936,8 @@
     if (els.fMetro.value) params.set("max_metro_distance", els.fMetro.value);
     if (els.fParking.checked) params.set("parking", "true");
 
-    setResultsHead("Filtering…", null);
-    renderState("loading", "One moment.", "Checking the inventory against your filters.");
+    setResultsHead(selectedCity || "All cities", null);
+    renderState("loading", "One moment.", "Checking the inventory.");
 
     try{
       const res = await fetch(`/api/filter-search?${params.toString()}`);
@@ -871,7 +947,7 @@
       }
       const data = await res.json();
 
-      setResultsHead("Filtered listings", data.total);
+      setResultsHead(selectedCity || "All cities", data.total);
       renderGrid(data.properties, null);
 
     }catch(err){
@@ -892,15 +968,12 @@
 
   els.clearFilters.addEventListener("click", () => {
     els.filterForm.reset();
+    runFilterSearch();
   });
 
-  // ---------------------------------------------------------
-  // INIT
-  // ---------------------------------------------------------
-
   renderExamples();
-  loadMeta();
   ensureSession();
+  loadMeta().then(runFilterSearch);
 
 })();
 </script>
