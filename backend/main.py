@@ -31,6 +31,7 @@ from real_estate_client import (
 )
 from property_llm import find_properties_for_customer
 from property_images import attach_images
+from leads_db import init_leads_db, save_lead
 
 
 # ---------------------------------------------------------
@@ -48,6 +49,11 @@ app.add_middleware(
     allow_methods=["*"],
     allow_headers=["*"],
 )
+
+# Make sure the leads table exists before any /api/appointments request
+# comes in. See the warning at the top of leads_db.py about Render's
+# free-tier ephemeral disk before treating this as durable storage.
+init_leads_db()
 
 
 # ---------------------------------------------------------
@@ -79,6 +85,15 @@ class AISearchRequest(BaseModel):
 
 class NewSessionResponse(BaseModel):
     session_id: str
+
+
+class AppointmentRequest(BaseModel):
+    name: str
+    phone: str
+    email: Optional[str] = ""
+    property_id: Optional[str] = ""
+    property_title: Optional[str] = ""
+    message: Optional[str] = ""
 
 
 # ---------------------------------------------------------
@@ -230,6 +245,33 @@ def ai_search(payload: AISearchRequest):
         "total_matches": results["total_matches"],
         "results": results["results"],
     }
+
+
+# ---------------------------------------------------------
+# BOOK AN APPOINTMENT (saves a lead to leads.db)
+# ---------------------------------------------------------
+
+@app.post("/api/appointments")
+def create_appointment(payload: AppointmentRequest):
+    name = payload.name.strip()
+    phone = payload.phone.strip()
+
+    if not name or not phone:
+        raise HTTPException(status_code=400, detail="Name and phone are required.")
+
+    try:
+        lead_id = save_lead(
+            name=name,
+            phone=phone,
+            email=(payload.email or "").strip(),
+            property_id=(payload.property_id or "").strip(),
+            property_title=(payload.property_title or "").strip(),
+            message=(payload.message or "").strip(),
+        )
+    except Exception as error:
+        raise HTTPException(status_code=500, detail=f"Could not save that: {error}")
+
+    return {"success": True, "lead_id": lead_id}
 
 
 # ---------------------------------------------------------
