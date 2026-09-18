@@ -302,29 +302,24 @@
     margin: 0;
   }
 
-  .card__toggle{
+  .card{
+    cursor: pointer;
+    transition: border-color 120ms ease, transform 120ms ease;
+  }
+  .card:hover,
+  .card:focus-visible{
+    border-color: var(--pine);
+    transform: translateY(-2px);
+  }
+
+  .card__hint{
     align-self: flex-start;
-    background: none;
-    border: none;
     color: var(--pine);
     font-size: 13px;
     font-weight: 500;
-    cursor: pointer;
-    padding: 2px 0;
     margin-top: 2px;
-    text-decoration: underline;
-    text-underline-offset: 2px;
   }
 
-  .card__detail{
-    display: none;
-    border-top: 1px solid var(--line-soft);
-    padding-top: 10px;
-    font-size: 13px;
-    color: var(--ink-soft);
-  }
-  .card__detail.open{ display: block; }
-  .card__detail p{ margin: 0 0 8px; }
   .card__amenities{
     display: flex;
     flex-wrap: wrap;
@@ -341,17 +336,227 @@
     color: var(--ink-soft);
   }
 
-  .card__gallery{
+  /* ---------------------------------------------------------
+     PROPERTY DETAIL MODAL (photo scroller + full details)
+  --------------------------------------------------------- */
+  .modal-overlay{
+    position: fixed;
+    inset: 0;
+    z-index: 80;
+    background: rgba(28,35,33,0.6);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 24px;
+    overflow-y: auto;
+  }
+  .modal-overlay[hidden]{ display: none; }
+
+  .modal{
+    position: relative;
+    width: min(640px, 100%);
+    max-height: calc(100vh - 48px);
+    overflow-y: auto;
+    background: var(--surface);
+    border-radius: 16px;
+    box-shadow: 0 24px 60px rgba(28,35,33,0.35);
+  }
+  .modal__close{
+    position: absolute;
+    top: 12px;
+    right: 12px;
+    z-index: 2;
+    width: 32px;
+    height: 32px;
+    border-radius: 50%;
+    border: none;
+    background: rgba(28,35,33,0.55);
+    color: #fff;
+    font-size: 18px;
+    line-height: 1;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+  }
+  .modal__gallery{
+    position: relative;
+    width: 100%;
+    aspect-ratio: 4 / 3;
+    background: var(--stone-deep);
+    overflow: hidden;
+  }
+  .modal__gallery img{
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    display: block;
+  }
+  .modal__gallery--empty{
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-family: var(--serif);
+    font-style: italic;
+    color: var(--muted);
+  }
+  .modal__nav{
+    position: absolute;
+    top: 50%;
+    transform: translateY(-50%);
+    width: 34px;
+    height: 34px;
+    border-radius: 50%;
+    border: none;
+    background: rgba(251,250,247,0.9);
+    color: var(--ink);
+    font-size: 18px;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+  }
+  .modal__nav--prev{ left: 10px; }
+  .modal__nav--next{ right: 10px; }
+  .modal__nav[hidden]{ display: none; }
+  .modal__dots{
+    position: absolute;
+    bottom: 12px;
+    left: 50%;
+    transform: translateX(-50%);
     display: flex;
     gap: 6px;
-    margin: 0 0 10px;
   }
-  .card__gallery img{
-    width: 64px;
-    height: 48px;
-    object-fit: cover;
-    border-radius: 6px;
+  .modal__dot{
+    width: 6px;
+    height: 6px;
+    border-radius: 50%;
+    background: rgba(251,250,247,0.6);
+    cursor: pointer;
+    border: none;
+    padding: 0;
+  }
+  .modal__dot.active{
+    width: 16px;
+    border-radius: 3px;
+    background: var(--surface);
+  }
+
+  .modal__body{
+    padding: 22px;
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+  }
+  .modal__title{
+    font-family: var(--serif);
+    font-size: 22px;
+    font-weight: 500;
+    margin: 0;
+  }
+  .modal__desc{
+    font-size: 14px;
+    color: var(--ink-soft);
+    margin: 0;
+  }
+  .modal__book-btn{
+    align-self: flex-start;
+    background: var(--pine);
+    color: var(--surface);
+    border: none;
+    padding: 10px 18px;
+    border-radius: 999px;
+    font-size: 13.5px;
+    font-weight: 500;
+    cursor: pointer;
+    margin-top: 4px;
+  }
+  .modal__book-btn:hover{ background: var(--pine-light); }
+
+  /* ---------------------------------------------------------
+     APPOINTMENT MODAL (lead capture form)
+  --------------------------------------------------------- */
+  .nav__book-btn{
+    border: 1px solid var(--pine);
+    background: transparent;
+    color: var(--pine);
+    font-size: 13px;
+    font-weight: 500;
+    padding: 7px 14px;
+    border-radius: 999px;
+    cursor: pointer;
+    white-space: nowrap;
+  }
+  .nav__book-btn:hover{ background: var(--pine); color: var(--surface); }
+
+  .appt-modal{
+    width: min(420px, 100%);
+    max-height: calc(100vh - 48px);
+    overflow-y: auto;
+    background: var(--surface);
+    border-radius: 16px;
+    padding: 26px;
+    position: relative;
+    box-shadow: 0 24px 60px rgba(28,35,33,0.35);
+  }
+  .appt-modal__title{
+    font-family: var(--serif);
+    font-size: 20px;
+    font-weight: 500;
+    margin: 0 0 4px;
+  }
+  .appt-modal__for{
+    font-size: 13px;
+    color: var(--muted);
+    margin: 0 0 16px;
+  }
+  .appt-field{ margin-bottom: 12px; }
+  .appt-field label{
+    display: block;
+    font-size: 12.5px;
+    color: var(--muted);
+    margin-bottom: 5px;
+  }
+  .appt-field input,
+  .appt-field textarea{
+    width: 100%;
     border: 1px solid var(--line);
+    background: var(--stone);
+    border-radius: 8px;
+    padding: 9px 11px;
+    font-family: var(--sans);
+    font-size: 13.5px;
+    color: var(--ink);
+    resize: vertical;
+  }
+  .appt-submit{
+    width: 100%;
+    background: var(--pine);
+    color: var(--surface);
+    border: none;
+    padding: 11px;
+    border-radius: 8px;
+    font-size: 14px;
+    font-weight: 500;
+    cursor: pointer;
+    margin-top: 6px;
+  }
+  .appt-submit:hover{ background: var(--pine-light); }
+  .appt-submit:disabled{ opacity: 0.55; cursor: default; }
+  .appt-note{
+    font-size: 12px;
+    color: var(--muted);
+    margin: 10px 0 0;
+  }
+  .appt-success{
+    font-size: 14.5px;
+    color: var(--ink);
+  }
+  .appt-success strong{ display: block; color: var(--pine); margin-bottom: 6px; }
+  .appt-error{
+    font-size: 13px;
+    color: var(--brick);
+    margin: 8px 0 0;
   }
 
   .state-msg{
@@ -509,6 +714,7 @@
     <div class="wrap">
       <div class="nav__row">
         <div class="nav__mark">Aggarwal Properties</div>
+        <button class="nav__book-btn" id="navBookBtn" type="button">Book an appointment</button>
         <div class="nav__meta" id="navMeta">loading inventory…</div>
       </div>
       <p class="nav__lede">
@@ -603,6 +809,58 @@
     <ol class="trail" id="trail" hidden></ol>
   </div>
 
+  <!-- ---------------------------------------------------------
+       PROPERTY DETAIL MODAL (photo scroller + full details)
+  --------------------------------------------------------- -->
+  <div class="modal-overlay" id="propertyModalOverlay" hidden>
+    <div class="modal" role="dialog" aria-modal="true" aria-labelledby="modalTitle">
+      <button class="modal__close" id="modalClose" type="button" aria-label="Close">&times;</button>
+      <div class="modal__gallery" id="modalGallery">
+        <img id="modalImage" alt="">
+        <button class="modal__nav modal__nav--prev" id="modalPrev" type="button" aria-label="Previous photo">&#8249;</button>
+        <button class="modal__nav modal__nav--next" id="modalNext" type="button" aria-label="Next photo">&#8250;</button>
+        <div class="modal__dots" id="modalDots"></div>
+      </div>
+      <div class="modal__body" id="modalBody"></div>
+    </div>
+  </div>
+
+  <!-- ---------------------------------------------------------
+       APPOINTMENT MODAL (lead capture form -> /api/appointments)
+  --------------------------------------------------------- -->
+  <div class="modal-overlay" id="apptModalOverlay" hidden>
+    <div class="appt-modal">
+      <button class="modal__close" id="apptModalClose" type="button" aria-label="Close">&times;</button>
+      <p class="appt-modal__title">Book an appointment</p>
+      <p class="appt-modal__for" id="apptFor">A team member will call you back to schedule a visit.</p>
+
+      <form id="apptForm">
+        <div class="appt-field">
+          <label for="apptName">Your name</label>
+          <input id="apptName" type="text" autocomplete="name" required>
+        </div>
+        <div class="appt-field">
+          <label for="apptPhone">Phone number</label>
+          <input id="apptPhone" type="tel" autocomplete="tel" required>
+        </div>
+        <div class="appt-field">
+          <label for="apptEmail">Email (optional)</label>
+          <input id="apptEmail" type="email" autocomplete="email">
+        </div>
+        <div class="appt-field">
+          <label for="apptMessage">Anything we should know? (optional)</label>
+          <textarea id="apptMessage" rows="3"></textarea>
+        </div>
+        <button class="appt-submit" id="apptSubmit" type="submit">Request a callback</button>
+        <p class="appt-error" id="apptError" hidden></p>
+      </form>
+
+      <div id="apptSuccess" hidden></div>
+
+      <p class="appt-note">We'll only use these details to contact you about this enquiry.</p>
+    </div>
+  </div>
+
 <script>
 (function(){
 
@@ -636,6 +894,29 @@
     resultsTitle: document.getElementById("resultsTitle"),
     resultsCount: document.getElementById("resultsCount"),
     resultsArea: document.getElementById("resultsArea"),
+
+    navBookBtn: document.getElementById("navBookBtn"),
+
+    propertyModalOverlay: document.getElementById("propertyModalOverlay"),
+    modalClose: document.getElementById("modalClose"),
+    modalGallery: document.getElementById("modalGallery"),
+    modalImage: document.getElementById("modalImage"),
+    modalPrev: document.getElementById("modalPrev"),
+    modalNext: document.getElementById("modalNext"),
+    modalDots: document.getElementById("modalDots"),
+    modalBody: document.getElementById("modalBody"),
+
+    apptModalOverlay: document.getElementById("apptModalOverlay"),
+    apptModalClose: document.getElementById("apptModalClose"),
+    apptFor: document.getElementById("apptFor"),
+    apptForm: document.getElementById("apptForm"),
+    apptName: document.getElementById("apptName"),
+    apptPhone: document.getElementById("apptPhone"),
+    apptEmail: document.getElementById("apptEmail"),
+    apptMessage: document.getElementById("apptMessage"),
+    apptSubmit: document.getElementById("apptSubmit"),
+    apptError: document.getElementById("apptError"),
+    apptSuccess: document.getElementById("apptSuccess"),
   };
 
   const EXAMPLES = [
@@ -749,6 +1030,9 @@
   function buildCard(property, matchInfo){
     const card = document.createElement("article");
     card.className = "card";
+    card.tabIndex = 0;
+    card.setAttribute("role", "button");
+    card.setAttribute("aria-label", `View details for ${property.title || "this property"}`);
 
     const images = Array.isArray(property.images) ? property.images : [];
 
@@ -816,59 +1100,21 @@
       body.appendChild(why);
     }
 
-    const toggle = document.createElement("button");
-    toggle.className = "card__toggle";
-    toggle.type = "button";
-    toggle.textContent = "View details";
+    const hint = document.createElement("span");
+    hint.className = "card__hint";
+    hint.textContent = images.length > 1 ? `View photos & details (${images.length}) →` : "View details →";
+    body.appendChild(hint);
 
-    const detail = document.createElement("div");
-    detail.className = "card__detail";
-
-    if (images.length > 1){
-      const gallery = document.createElement("div");
-      gallery.className = "card__gallery";
-      images.slice(1).forEach(url => {
-        const thumb = document.createElement("img");
-        thumb.src = url;
-        thumb.alt = "Additional property photo";
-        thumb.loading = "lazy";
-        gallery.appendChild(thumb);
-      });
-      detail.appendChild(gallery);
-    }
-
-    const desc = document.createElement("p");
-    desc.textContent = property.description || "No further description available.";
-    detail.appendChild(desc);
-
-    const amenities = amenityList(property.amenities);
-    if (amenities.length){
-      const list = document.createElement("ul");
-      list.className = "card__amenities";
-      amenities.forEach(a => {
-        const li = document.createElement("li");
-        li.textContent = a;
-        list.appendChild(li);
-      });
-      detail.appendChild(list);
-    }
-
-    if (property.availability){
-      const avail = document.createElement("p");
-      avail.style.margin = "0";
-      avail.style.fontSize = "12.5px";
-      avail.textContent = property.availability;
-      detail.appendChild(avail);
-    }
-
-    toggle.addEventListener("click", () => {
-      const open = detail.classList.toggle("open");
-      toggle.textContent = open ? "Hide details" : "View details";
-    });
-
-    body.appendChild(toggle);
-    body.appendChild(detail);
     card.appendChild(body);
+
+    const openThisModal = () => openPropertyModal(property, matchInfo);
+    card.addEventListener("click", openThisModal);
+    card.addEventListener("keydown", (e) => {
+      if (e.key === "Enter" || e.key === " "){
+        e.preventDefault();
+        openThisModal();
+      }
+    });
 
     return card;
   }
@@ -1043,6 +1289,245 @@
   els.clearFilters.addEventListener("click", () => {
     els.filterForm.reset();
     runFilterSearch();
+  });
+
+  // ---------------------------------------------------------
+  // PROPERTY DETAIL MODAL (photo scroller + full details)
+  // ---------------------------------------------------------
+
+  let modalImages = [];
+  let modalIndex = 0;
+  let modalProperty = null;
+
+  function renderModalImage(){
+    if (!modalImages.length){
+      els.modalGallery.classList.add("modal__gallery--empty");
+      els.modalImage.style.display = "none";
+      els.modalGallery.querySelectorAll(".gallery-empty-text").forEach(n => n.remove());
+      const emptyText = document.createElement("span");
+      emptyText.className = "gallery-empty-text";
+      emptyText.textContent = "No photos available";
+      els.modalGallery.appendChild(emptyText);
+      els.modalPrev.hidden = true;
+      els.modalNext.hidden = true;
+      els.modalDots.innerHTML = "";
+      return;
+    }
+
+    els.modalGallery.classList.remove("modal__gallery--empty");
+    els.modalGallery.querySelectorAll(".gallery-empty-text").forEach(n => n.remove());
+    els.modalImage.style.display = "block";
+    els.modalImage.src = modalImages[modalIndex];
+    els.modalImage.alt = modalProperty ? (modalProperty.title || "Property photo") : "Property photo";
+
+    const multi = modalImages.length > 1;
+    els.modalPrev.hidden = !multi;
+    els.modalNext.hidden = !multi;
+
+    els.modalDots.innerHTML = "";
+    if (multi){
+      modalImages.forEach((_, i) => {
+        const dot = document.createElement("button");
+        dot.type = "button";
+        dot.className = "modal__dot" + (i === modalIndex ? " active" : "");
+        dot.setAttribute("aria-label", `Photo ${i + 1} of ${modalImages.length}`);
+        dot.addEventListener("click", () => { modalIndex = i; renderModalImage(); });
+        els.modalDots.appendChild(dot);
+      });
+    }
+  }
+
+  els.modalPrev.addEventListener("click", () => {
+    modalIndex = (modalIndex - 1 + modalImages.length) % modalImages.length;
+    renderModalImage();
+  });
+  els.modalNext.addEventListener("click", () => {
+    modalIndex = (modalIndex + 1) % modalImages.length;
+    renderModalImage();
+  });
+
+  function openPropertyModal(property, matchInfo){
+    modalProperty = property;
+    modalImages = Array.isArray(property.images) ? property.images : [];
+    modalIndex = 0;
+    renderModalImage();
+
+    els.modalBody.innerHTML = "";
+
+    if (matchInfo){
+      const pill = document.createElement("span");
+      pill.className = `pill pill--${matchInfo.match_type}`;
+      pill.textContent = matchInfo.match_type === "exact" ? "Exact match"
+        : matchInfo.match_type === "close" ? "Close match"
+        : "Alternative";
+      els.modalBody.appendChild(pill);
+    }
+
+    const title = document.createElement("h2");
+    title.className = "modal__title";
+    title.id = "modalTitle";
+    title.textContent = property.title || "Untitled property";
+    els.modalBody.appendChild(title);
+
+    const price = document.createElement("div");
+    price.className = "card__price";
+    price.textContent = formatPrice(property.price);
+    els.modalBody.appendChild(price);
+
+    const place = document.createElement("p");
+    place.className = "card__place";
+    place.textContent = `${property.location || ""}, ${property.city || ""}. About ${property.metro_distance_km ?? "an unknown"} km from the metro.`;
+    els.modalBody.appendChild(place);
+
+    const furnishBit = property.furnished ? property.furnished.toLowerCase() : "furnishing unspecified";
+    const parkingBit = property.parking ? "parking included" : "no parking";
+    const spec = document.createElement("p");
+    spec.className = "card__spec";
+    spec.textContent = `${property.bhk ?? "?"} BHK ${property.property_type || ""}, ${property.area_sqft ?? "?"} sq ft. ${furnishBit}, ${parkingBit}.`;
+    els.modalBody.appendChild(spec);
+
+    if (matchInfo && matchInfo.why_match){
+      const why = document.createElement("p");
+      why.className = "card__why";
+      why.textContent = matchInfo.why_match;
+      els.modalBody.appendChild(why);
+    }
+
+    const desc = document.createElement("p");
+    desc.className = "modal__desc";
+    desc.textContent = property.description || "No further description available.";
+    els.modalBody.appendChild(desc);
+
+    const amenities = amenityList(property.amenities);
+    if (amenities.length){
+      const list = document.createElement("ul");
+      list.className = "card__amenities";
+      amenities.forEach(a => {
+        const li = document.createElement("li");
+        li.textContent = a;
+        list.appendChild(li);
+      });
+      els.modalBody.appendChild(list);
+    }
+
+    if (property.availability){
+      const avail = document.createElement("p");
+      avail.style.margin = "0";
+      avail.style.fontSize = "12.5px";
+      avail.style.color = "var(--muted)";
+      avail.textContent = property.availability;
+      els.modalBody.appendChild(avail);
+    }
+
+    const bookBtn = document.createElement("button");
+    bookBtn.type = "button";
+    bookBtn.className = "modal__book-btn";
+    bookBtn.textContent = "Book a visit for this property";
+    bookBtn.addEventListener("click", () => {
+      closePropertyModal();
+      openApptModal(property);
+    });
+    els.modalBody.appendChild(bookBtn);
+
+    els.propertyModalOverlay.hidden = false;
+    els.modalClose.focus();
+  }
+
+  function closePropertyModal(){
+    els.propertyModalOverlay.hidden = true;
+  }
+
+  els.modalClose.addEventListener("click", closePropertyModal);
+  els.propertyModalOverlay.addEventListener("click", (e) => {
+    if (e.target === els.propertyModalOverlay) closePropertyModal();
+  });
+
+  // ---------------------------------------------------------
+  // APPOINTMENT MODAL (lead capture -> /api/appointments)
+  // ---------------------------------------------------------
+
+  let apptProperty = null;
+
+  function openApptModal(property){
+    apptProperty = property || null;
+    els.apptFor.textContent = property
+      ? `For: ${property.title} (${property.location || ""}, ${property.city || ""})`
+      : "A team member will call you back to schedule a visit.";
+
+    els.apptForm.hidden = false;
+    els.apptForm.reset();
+    els.apptError.hidden = true;
+    els.apptSuccess.hidden = true;
+    els.apptSuccess.innerHTML = "";
+    els.apptSubmit.disabled = false;
+    els.apptSubmit.textContent = "Request a callback";
+
+    els.apptModalOverlay.hidden = false;
+    els.apptName.focus();
+  }
+
+  function closeApptModal(){
+    els.apptModalOverlay.hidden = true;
+  }
+
+  els.navBookBtn.addEventListener("click", () => openApptModal(null));
+  els.apptModalClose.addEventListener("click", closeApptModal);
+  els.apptModalOverlay.addEventListener("click", (e) => {
+    if (e.target === els.apptModalOverlay) closeApptModal();
+  });
+
+  document.addEventListener("keydown", (e) => {
+    if (e.key !== "Escape") return;
+    if (!els.propertyModalOverlay.hidden) closePropertyModal();
+    if (!els.apptModalOverlay.hidden) closeApptModal();
+  });
+
+  els.apptForm.addEventListener("submit", async (e) => {
+    e.preventDefault();
+
+    const name = els.apptName.value.trim();
+    const phone = els.apptPhone.value.trim();
+
+    if (!name || !phone){
+      els.apptError.textContent = "Name and phone number are required.";
+      els.apptError.hidden = false;
+      return;
+    }
+
+    els.apptError.hidden = true;
+    els.apptSubmit.disabled = true;
+    els.apptSubmit.textContent = "Sending…";
+
+    try{
+      const res = await fetch("/api/appointments", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+          name,
+          phone,
+          email: els.apptEmail.value.trim(),
+          message: els.apptMessage.value.trim(),
+          property_id: apptProperty ? (apptProperty.property_id || apptProperty.id || "") : "",
+          property_title: apptProperty ? (apptProperty.title || "") : "",
+        }),
+      });
+
+      if (!res.ok){
+        const errBody = await res.json().catch(() => ({}));
+        throw new Error(errBody.detail || `request failed (${res.status})`);
+      }
+
+      els.apptForm.hidden = true;
+      els.apptSuccess.hidden = false;
+      els.apptSuccess.innerHTML = "<strong>Request sent.</strong> We've got your details and will call you back shortly.";
+
+    }catch(err){
+      console.error(err);
+      els.apptError.textContent = `Couldn't send that: ${err.message}`;
+      els.apptError.hidden = false;
+      els.apptSubmit.disabled = false;
+      els.apptSubmit.textContent = "Request a callback";
+    }
   });
 
   renderExamples();
